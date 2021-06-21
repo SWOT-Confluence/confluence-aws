@@ -1,0 +1,6 @@
+stages:
+  input:
+    input:
+      num_jobs: 1
+      array_size: 500
+      input_files: []
