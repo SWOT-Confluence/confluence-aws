@@ -8,4 +8,6 @@ Please **do not share this** repository, algorithm code contained within, or con
 
 # installation
 
+# configuration
+
 # execution
