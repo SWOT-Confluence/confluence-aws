@@ -48,12 +48,13 @@ class Stage:
     def create_algorithms(self, stage_dict):
         """Create Algorithm objects.
 
-        Requires defining dependencies first if they exist.
+        stage_dict containes the number of jobs, array size, and input file 
+        names (list) needed to complete an execution of the algorithm.
 
         Parameters
         ----------
         stage_dict: dict
-            dictionary of represent data needed to create Algorithm objects
+            dictionary of data needed to create Algorithm objects
         """
 
         for key in stage_dict.keys():
