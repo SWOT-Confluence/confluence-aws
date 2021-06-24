@@ -1,5 +1,6 @@
 # Standard imports
 import csv
+import logging
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -35,9 +36,10 @@ class TestConfluence(unittest.TestCase):
         """Tests the execute_stages method."""
 
         mock_boto.client("batch").submit_job.side_effect = execute_response
+        logger = logging.getLogger("test_logger")
         confluence = Confluence(self.CONFIG_FILE)
         confluence.create_stages()
-        confluence.execute_stages()
+        confluence.execute_stages(logger)
 
         self.assertEqual(7, len(confluence.submitted))
         self.assertEqual(11, mock_boto.client("batch").submit_job.call_count)
@@ -55,20 +57,19 @@ class TestConfluence(unittest.TestCase):
     
     @patch("confluence.Job.boto3", autospec=True)
     @patch("confluence.Confluence.sys", autospec=True)
-    @patch("confluence.Confluence.logging", autospec=True)
     @patch.object(Confluence, "terminate_jobs")
-    def test_execute_stages_exception(self, mock_terminate, mock_logger,
-        mock_exit, mock_job_boto):
+    def test_execute_stages_exception(self, mock_terminate, mock_exit, 
+        mock_job_boto):
         """Tests execute_stages method when an exception is thrown."""
 
         error = botocore.exceptions.ClientError(error_response, "Test")
         mock_job_boto.client("batch").submit_job.side_effect = error
-        
         exception_config = Path(__file__).parent / "data" / "confluence_test_exception.yaml"
+        logger = logging.getLogger("test_logger")
+        logging.disable(logging.CRITICAL)
         confluence = Confluence(exception_config)
         confluence.create_stages()
-        confluence.create_logger()
-        confluence.execute_stages()
+        confluence.execute_stages(logger)
         
         self.assertEqual(1, mock_terminate.call_count)
     
@@ -79,11 +80,11 @@ class TestConfluence(unittest.TestCase):
 
         mock_job_boto.client("batch").submit_job.side_effect = execute_response
         mock_conf_boto.client("batch").describe_jobs.side_effect = describe_response
-
+        logger = logging.getLogger("test_logger")
         confluence = Confluence(self.CONFIG_FILE)
         confluence.create_stages()
-        confluence.execute_stages()
-        confluence.terminate_jobs()
+        confluence.execute_stages(logger)
+        confluence.terminate_jobs(logger)
 
         self.assertEqual(11, len(confluence.terminated))
         self.assertEqual(0, len(confluence.not_terminated))
@@ -99,7 +100,8 @@ class TestConfluence(unittest.TestCase):
         confluence.create_stages()
         submission_file = Path(__file__).parent / "data" / "submission_test.csv"
         confluence.set_submission_file(submission_file=submission_file)
-        confluence.execute_stages()
+        logger = logging.getLogger("test_logger")
+        confluence.execute_stages(logger)
 
         stage = []
         alg = []

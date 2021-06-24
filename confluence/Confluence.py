@@ -23,10 +23,6 @@ class Confluence:
     ----------
     config_data: dict
         dictionary of data required to run Confluence and create Stage objects
-    log_file: Path
-        Path to log file
-    logger: Logger
-        Logger object used to log status of Confluence
     not_terminaged: list
         list of job identifiers that could not be terminated
     stages: list
@@ -40,8 +36,6 @@ class Confluence:
 
     Methods
     -------
-    create_logger()
-        creates Logger object used to log status
     create_stages()
         creates Stage objects
     execute_stages()
@@ -60,55 +54,12 @@ class Confluence:
 
         with open(config_file) as yaml_file:
             self.config_data = yaml.safe_load(yaml_file)
-        self.log_file = Path(self.config_data["log_file"]) \
-            if len(self.config_data["log_file"]) != 0 else None
-        self.logger = None
         self.stages = []
         self.submission_file = Path(self.config_data["submission_file"]) \
             if len(self.config_data["submission_file"]) != 0 else None
         self.submitted = []
         self.terminated = []
         self.not_terminated = []
-
-    def create_logger(self, log_to_console=True, log_to_file=False):
-        """Creates and sets a Logger object to allow logging of status.
-
-        Status is logged to console if log_to_console is set to True and status 
-        is logged to file is log_to_file is set to True.
-
-        If log_to_file is set to True then a file path must be defined in 
-        configuration YAML.
-
-        Default is to log to console and not to file.
-
-        Parameters
-        ----------
-        log_to_console: boolean, optional
-            Whether to log to console
-        log_to_file: boolean, optional
-            Whether to log to a file referenced in configuration YAML.
-        """
-
-        logger = logging.getLogger("confluence_logger")
-        logger.setLevel(logging.DEBUG)
-
-        # Console logging
-        if log_to_console:
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(logging.DEBUG)
-            console_format = logging.Formatter("%(asctime)s - %(message)s")
-            console_handler.setFormatter(console_format)
-            logger.addHandler(console_handler)
-
-        # File logging
-        if log_to_file and self.log_file:
-            file_handler = logging.FileHandler(self.log_file)
-            file_handler.setLevel(logging.DEBUG)
-            file_format = logging.Formatter("%(asctime)s - %(message)s")
-            file_handler.setFormatter(file_format)
-            logger.addHandler(file_handler)
-
-        self.logger = logger
 
     def create_stages(self):
         """Create Stage objects based on configuration file data."""
@@ -118,16 +69,16 @@ class Confluence:
             self.stages.append(stage)
             stage.create_algorithms(self.config_data["stages"][key])
 
-    def execute_stages(self):
+    def execute_stages(self, logger):
         """Invoke Algorithm objects to submit jobs to AWS Batch for all stages.
 
         If a job submission fails, the exception is propagated from the Job and
-        handled here; all submitted jobs are terminated.
-        
-        Raises
-        ------
-        botocore.exceptions.ClientError
-            if AWS Batch API returns an error response upon job submission
+        handled here; all submitted jobs are terminated and the program exits.
+
+        Parameters
+        ----------
+        logger: Logger
+            logger object to write status with        
         """
         for stage in self.stages:
             try:
@@ -137,24 +88,32 @@ class Confluence:
                 stage.run_algorithms()
                 self.submitted.append(stage)
                 if self.submission_file: self.write_submitted()
-                self.logger.info(f"All algorithm's jobs for {stage} stage have been submitted.")
+                logger.info(f"All algorithm jobs for {stage.name} stage have been submitted.")
             
             except botocore.exceptions.ClientError as error:
-                self.logger.critical(f"Job submission FAILED and all jobs will be TERMINATED.")
-                self.logger.critical(f"Job failed with the following error: {error}")
+                logger.critical(f"Job submission FAILED and all jobs will be TERMINATED.")
+                logger.critical(f"Job failed with the following error: {error}")
 
-                self.terminate_jobs()
-                self.logger.info(f"{len(self.terminated)} jobs terminated.")
-                self.logger.info(f"Jobs that could not be terminated and require manual termination: {', '.join(self.not_terminated)}.")
-                self.logger.info(f"Program exiting.")
+                self.terminate_jobs(logger)
+                logger.info(f"{len(self.terminated)} jobs terminated.")
+                logger.info(f"Jobs that could not be terminated and require manual termination: {', '.join(self.not_terminated)}.")
+                logger.info(f"Program exiting.")
                 sys.exit("Job submission failure")
 
-    def terminate_jobs(self):
+    def terminate_jobs(self, logger):
         """Terminate jobs that have been submitted to AWS Batch.
 
         Uses self.submitted list to determine submitted jobs. Jobs in SUBMITTED,
         PENDING, or RUNNABLE state are cancelled while jobs in STARTING or 
         RUNNING state are terminated. This transitions the job's state to FAILED.
+
+        If an exception is thrown when a job is being cancelled or terminated
+        the exception is reported and the program exits.
+
+        Parameters
+        ----------
+        logger: Logger
+            logger object to write status with
         """
 
         batch = boto3.client("batch")
@@ -180,10 +139,10 @@ class Confluence:
                     self.not_terminated.append(job_id)
             
             except botocore.exceptions.ClientError as error:
-                self.logger.critical(f"Job termination FAILURE for {job_id}.")
-                self.logger.critical("You will need to manually terminate any remaining jobs.")
-                self.logger.critical(f"Job failed with the following error: {error}")
-                self.logger.critical("Program exiting.")
+                logger.critical(f"Job termination FAILURE for {job_id}.")
+                logger.critical("You will need to manually terminate any remaining jobs.")
+                logger.critical(f"Job failed with the following error: {error}")
+                logger.critical("Program exiting.")
                 sys.exit("Job termination failure")
 
     def write_submitted(self):
