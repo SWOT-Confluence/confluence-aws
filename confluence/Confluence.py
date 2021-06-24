@@ -137,6 +137,7 @@ class Confluence:
                 stage.run_algorithms()
                 self.submitted.append(stage)
                 if self.submission_file: self.write_submitted()
+                self.logger.info(f"All algorithm's jobs for {stage} stage have been submitted.")
             
             except botocore.exceptions.ClientError as error:
                 self.logger.critical(f"Job submission FAILED and all jobs will be TERMINATED.")
