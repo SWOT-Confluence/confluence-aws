@@ -1,14 +1,6 @@
+log_file: ""
+submission_file: ""
 stages:
-  input:
-    input:
-      num_jobs: 1
-      array_size: 500
-      input_files: []
-  prediagnostics:
-    prediagnostics:
-      num_jobs: 1
-      array_size: 500
-      input_files: []
   flpe:
     geobam:
       num_jobs: 1
@@ -20,8 +12,8 @@ stages:
       input_files: ["reaches.txt"]
     metroman:
       num_jobs: 1
-      array_size: 10
-      input_files: ["reaches.txt"]
+      array_size: 2
+      input_files: ["reach_sets.txt"]
     momma:
       num_jobs: 1
       array_size: 10
@@ -30,23 +22,3 @@ stages:
       num_jobs: 1
       array_size: 10
       input_files: ["reaches.txt"]
-  integrator:
-      integrator:
-        num_jobs: 1
-        array_size: 500
-        input_files: []
-  consensus:
-    consensus:
-      num_jobs: 1
-      array_size: 500
-      input_files: []
-  postdiagnostics:
-    postdiagnostics:
-      num_jobs: 1
-      array_size: 500
-      input_files: []
-  validation:
-    validation:
-      num_jobs: 1
-      array_size: 500
-      input_files: []

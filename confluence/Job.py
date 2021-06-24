@@ -16,6 +16,8 @@ class Job:
         list of dictionary job identifiers for jobs that this job depends on
     job_def: str
         the name of the job definition that the job is created from
+    job_id: str
+        unique identifier of job when submitted to AWS Batch
     name: str
         the name of the job
     propagate_tags: bool
@@ -51,6 +53,7 @@ class Job:
         self.overrides = {}
         self.depends_on = []
         self.job_def = job_def
+        self.job_id = ""
         self.name = name
         self.propagate_tags = False
         self.queue = queue
@@ -137,6 +140,7 @@ class Job:
                 tags=self.tags,
                 propagateTags=self.propagate_tags
             )
+            self.job_id = response["jobId"]
             return response["jobId"]
         except botocore.exceptions.ClientError as error:
             raise error
