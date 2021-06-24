@@ -44,17 +44,19 @@ class Confluence:
         terminates any running job in AWS Batch
     """
 
-    def __init__(self, config_file):
+    def __init__(self, config_file, log_file=None):
         """
         Parameters
         ----------
         config_file : Path
             path to YAML file that contains configuration data
+        log_file: Path
+            path to log file
         """
 
         with open(config_file) as yaml_file:
             self.config_data = yaml.safe_load(yaml_file)
-        self.logger = create_logger()
+        self.logger = create_logger(log_file)
         self.stages = []
         self.submitted = []
         self.terminated = []
