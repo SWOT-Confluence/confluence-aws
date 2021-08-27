@@ -1,6 +1,5 @@
 # Standard imports
 import csv
-import logging
 from pathlib import Path
 import sys
 
