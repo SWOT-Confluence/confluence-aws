@@ -69,7 +69,7 @@ class Algorithm:
             job = Job(name=f"{stage}_{self.name}_{i}", job_def=self.name,
                 queue=stage)
             if (len(self.input_files) > 0): job.define_arguments([self.input_files[i]])
-            job.define_array(self.array_size)
+            if (self.array_size > 0): job.define_array(self.array_size)
             job.define_tags(tag_dict={ "job": f"{stage}_{self.name}_{i}" },
                 will_propagate=True)
             self.jobs.append(job)
