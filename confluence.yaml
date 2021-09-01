@@ -1,24 +1,55 @@
-log_file: ""
-submission_file: ""
+log_file: "/home/nikki/Documents/confluence/workspace/confluence_aws/working/confluence.log"
+submission_file: "/home/nikki/Documents/confluence/workspace/confluence_aws/working/submitted.csv"
 stages:
+  input:
+    input:
+      num_jobs: 1
+      array_size: 0
+      input_files: []
+  prediagnostics:
+    prediagnostics:
+      num_jobs: 1
+      array_size: 41
+      input_files: ["reaches.json"]
   flpe:
     geobam:
       num_jobs: 1
-      array_size: 10
-      input_files: ["reaches.txt"]
+      array_size: 41
+      input_files: ["reaches.json"]
     hivdi:
       num_jobs: 1
-      array_size: 10
-      input_files: ["reaches.txt"]
+      array_size: 41
+      input_files: []
     metroman:
       num_jobs: 1
-      array_size: 2
-      input_files: ["reach_sets.txt"]
+      array_size: 8
+      input_files: ["sets.json"]
     momma:
       num_jobs: 1
-      array_size: 10
-      input_files: ["reaches.txt"]
-    sad:
+      array_size: 41
+      input_files: ["reaches.json"]
+  postdiagnostics_flpe:
+    postdiagnostics_flpe:
       num_jobs: 1
-      array_size: 10
-      input_files: ["reaches.txt"]
+      array_size: 41
+      input_files: []
+  moi:
+      moi:
+        num_jobs: 1
+        array_size: 5
+        input_files: ["basin.json"]
+  postdiagnostics_moi:
+    postdiagnostics_moi:
+      num_jobs: 1
+      array_size: 41
+      input_files: []
+  offline:
+    offline:
+      num_jobs: 1
+      array_size: 41
+      input_files: []
+  output:
+    output:
+      num_jobs: 1
+      array_size: 6
+      input_files: []
