@@ -5,51 +5,51 @@ stages:
     input:
       num_jobs: 1
       array_size: 0
-      input_files: []
+      arguments: ["constrained", "pull"]
   prediagnostics:
     prediagnostics:
       num_jobs: 1
       array_size: 41
-      input_files: ["reaches.json"]
+      arguments: ["reaches.json"]
   flpe:
     geobam:
       num_jobs: 1
       array_size: 41
-      input_files: ["reaches.json"]
+      arguments: ["reaches.json"]
     hivdi:
       num_jobs: 1
       array_size: 41
-      input_files: []
+      arguments: []
     metroman:
       num_jobs: 1
       array_size: 8
-      input_files: ["sets.json"]
+      arguments: ["sets.json"]
     momma:
       num_jobs: 1
       array_size: 41
-      input_files: ["reaches.json"]
+      arguments: ["reaches.json"]
   postdiagnostics_flpe:
     postdiagnostics_flpe:
       num_jobs: 1
       array_size: 41
-      input_files: []
+      arguments: []
   moi:
       moi:
         num_jobs: 1
         array_size: 5
-        input_files: ["basin.json"]
+        arguments: ["basin.json"]
   postdiagnostics_moi:
     postdiagnostics_moi:
       num_jobs: 1
       array_size: 41
-      input_files: []
+      arguments: []
   offline:
     offline:
       num_jobs: 1
       array_size: 41
-      input_files: []
+      arguments: []
   output:
     output:
       num_jobs: 1
       array_size: 6
-      input_files: []
+      arguments: ["continent.json", "constrained"]

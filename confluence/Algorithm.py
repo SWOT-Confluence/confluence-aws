@@ -15,8 +15,8 @@ class Algorithm:
     ----------
     array_size: int
         size of the AWS Batch job array for each job
-    input_files: list
-        list of input files that are submitted as arguments to a job
+    arguments: list
+        list of arguments that are submitted to a job
     job_ids: list
         list of job identifiers for jobs submitted to AWS Batch
     jobs: list
@@ -34,7 +34,7 @@ class Algorithm:
         submits jobs to AWS Batch
     """
 
-    def __init__(self, name, num_jobs, array_size, input_files):
+    def __init__(self, name, num_jobs, array_size, arguments):
         """
         Parameters
         ----------
@@ -44,12 +44,12 @@ class Algorithm:
             the number of jobs to be created
         array_size: int
             the size of the AWS Batch job array for each job
-        input_files: list
-            list of input files that are submitted as arguments for each job
+        arguments: list
+            list of arguments that are submitted for each job
         """
 
         self.array_size = array_size
-        self.input_files = input_files
+        self.arguments = arguments
         self.job_ids = []
         self.jobs = []
         self.name = name
@@ -68,7 +68,7 @@ class Algorithm:
         for i in range(self.num_jobs):
             job = Job(name=f"{stage}_{self.name}_{i}", job_def=self.name,
                 queue=stage)
-            if (len(self.input_files) > 0): job.define_arguments([self.input_files[i]])
+            if (len(self.arguments) > 0): job.define_arguments(self.arguments)
             if (self.array_size > 0): job.define_array(self.array_size)
             job.define_tags(tag_dict={ "job": f"{stage}_{self.name}_{i}" },
                 will_propagate=True)

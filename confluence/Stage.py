@@ -61,7 +61,7 @@ class Stage:
             algorithm = Algorithm(name=key, 
                 num_jobs=stage_dict[key]["num_jobs"],
                 array_size=stage_dict[key]["array_size"], 
-                input_files=stage_dict[key]["input_files"])
+                arguments=stage_dict[key]["arguments"])
             self.algorithms.append(algorithm)
             algorithm.create_jobs(self.name)
 
