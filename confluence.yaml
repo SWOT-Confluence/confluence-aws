@@ -5,7 +5,7 @@ stages:
     input:
       num_jobs: 1
       array_size: 0
-      arguments: ["constrained", "pull"]
+      arguments: ["unconstrained", "no pull"]
   prediagnostics:
     prediagnostics:
       num_jobs: 1
@@ -25,6 +25,14 @@ stages:
       array_size: 8
       arguments: ["sets.json"]
     momma:
+      num_jobs: 1
+      array_size: 41
+      arguments: ["reaches.json"]
+    sad:
+      num_jobs: 1
+      array_size: 41
+      arguments: ["reaches.json"]
+    sic4dvar:
       num_jobs: 1
       array_size: 41
       arguments: ["reaches.json"]
@@ -48,8 +56,13 @@ stages:
       num_jobs: 1
       array_size: 41
       arguments: []
+  validation:
+    validation:
+      num_jobs: 1
+      array_size: 0
+      arguments: ["continent.json"]
   output:
     output:
       num_jobs: 1
       array_size: 6
-      arguments: ["continent.json", "constrained"]
+      arguments: ["continent.json", "unconstrained"]
