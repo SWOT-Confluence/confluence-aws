@@ -1,5 +1,5 @@
-log_file: "/home/nikki/Documents/confluence/workspace/confluence_aws/working/confluence.log"
-submission_file: "/home/nikki/Documents/confluence/workspace/confluence_aws/working/submitted.csv"
+log_file: "/path/to/log/file"
+submission_file: "/path/to/submission/file"
 stages:
   input:
     input:
