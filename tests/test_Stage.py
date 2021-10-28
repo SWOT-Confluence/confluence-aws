@@ -12,17 +12,17 @@ class TestStage(unittest.TestCase):
         "geobam": { 
             "num_jobs": 2, 
             "array_size": 500, 
-            "input_files": ["reaches_1.txt", "reaches_2.txt"]
+            "arguments": ["reaches_1.json"]
         }, 
         "hivdi": { 
             "num_jobs": 2, 
             "array_size": 500, 
-            "input_files": ["reaches_1.txt", "reaches_2.txt"]
+            "arguments": ["reaches_1.json"]
         }, 
         "metroman": { 
             "num_jobs": 2, 
             "array_size": 500, 
-            "input_files": ["reaches_1.txt", "reaches_2.txt"]
+            "arguments": ["reaches_1.json"]
         }
     }
 
@@ -36,7 +36,7 @@ class TestStage(unittest.TestCase):
 
         alg = stage.algorithms[1]
         self.assertEqual(500, alg.array_size)
-        self.assertEqual(["reaches_1.txt", "reaches_2.txt"], alg.input_files)
+        self.assertEqual(["reaches_1.json"], alg.arguments)
         self.assertEqual(0, len(alg.job_ids))
         self.assertEqual(2, len(alg.jobs))
         self.assertEqual("hivdi", alg.name)

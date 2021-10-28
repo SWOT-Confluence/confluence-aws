@@ -5,50 +5,50 @@ stages:
     input:
       num_jobs: 1
       array_size: 500
-      input_files: []
+      arguments: []
   prediagnostics:
     prediagnostics:
       num_jobs: 1
       array_size: 500
-      input_files: []
+      arguments: []
   flpe:
     geobam:
       num_jobs: 1
       array_size: 10
-      input_files: ["reaches.txt"]
+      arguments: ["reaches.txt"]
     hivdi:
       num_jobs: 1
       array_size: 10
-      input_files: ["reaches.txt"]
+      arguments: ["reaches.txt"]
     metroman:
       num_jobs: 1
       array_size: 10
-      input_files: ["reaches.txt"]
+      arguments: ["reaches.txt"]
     momma:
       num_jobs: 1
       array_size: 10
-      input_files: ["reaches.txt"]
+      arguments: ["reaches.txt"]
     sad:
       num_jobs: 1
       array_size: 10
-      input_files: ["reaches.txt"]
+      arguments: ["reaches.txt"]
   integrator:
       integrator:
         num_jobs: 1
         array_size: 500
-        input_files: []
+        arguments: []
   consensus:
     consensus:
       num_jobs: 1
       array_size: 500
-      input_files: []
+      arguments: []
   postdiagnostics:
     postdiagnostics:
       num_jobs: 1
       array_size: 500
-      input_files: []
+      arguments: []
   validation:
     validation:
       num_jobs: 1
       array_size: 500
-      input_files: []
+      arguments: []

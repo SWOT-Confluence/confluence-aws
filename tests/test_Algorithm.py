@@ -25,13 +25,13 @@ class TestAlgorithm(unittest.TestCase):
     def test_create_jobs(self):
         """Tests the create_jobs method."""
 
-        alg = Algorithm("test_alg", 3, 500, self.INPUT_FILES)
+        alg = Algorithm("test_alg", 3, 500, ["reaches.json"])
         alg.create_jobs("test_flpe")
         self.assertEqual(3, len(alg.jobs))
 
         job = alg.jobs[1]
         self.assertEqual({ "size": 500 }, job.array_props)
-        self.assertEqual({ "command": ["reaches_2.txt"] }, job.overrides)
+        self.assertEqual({ "command": ["reaches.json"] }, job.overrides)
         self.assertEqual("test_alg", job.job_def)
         self.assertEqual("test_flpe_test_alg_1", job.name)
         self.assertTrue(job.propagate_tags)
