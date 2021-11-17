@@ -5,12 +5,17 @@ stages:
     input:
       num_jobs: 1
       array_size: 0
-      arguments: ["unconstrained", "no pull"]
+      arguments: []
   prediagnostics:
     prediagnostics:
       num_jobs: 1
       array_size: 41
       arguments: ["reaches.json"]
+  priors:
+    priors:
+      num_jobs: 1
+      array_size: 6
+      arguments: ["constrained", "grdc", "usgs", "gbpriors"]
   flpe:
     geobam:
       num_jobs: 1
@@ -65,4 +70,4 @@ stages:
     output:
       num_jobs: 1
       array_size: 6
-      arguments: ["continent.json", "unconstrained"]
+      arguments: ["continent.json", "constrained"]
