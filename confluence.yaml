@@ -6,16 +6,16 @@ stages:
       num_jobs: 1
       array_size: 0
       arguments: []
-  prediagnostics:
-    prediagnostics:
-      num_jobs: 1
-      array_size: 41
-      arguments: ["reaches.json"]
   priors:
     priors:
       num_jobs: 1
       array_size: 6
       arguments: ["constrained", "grdc", "usgs", "gbpriors"]
+  prediagnostics:
+    prediagnostics:
+      num_jobs: 1
+      array_size: 41
+      arguments: ["reaches.json"]
   flpe:
     geobam:
       num_jobs: 1
