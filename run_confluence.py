@@ -25,6 +25,7 @@ import argparse
 from datetime import datetime
 import logging
 from pathlib import Path
+import sys
 
 # Third-party imports
 import boto3
@@ -150,8 +151,41 @@ def store_s3_creds(key):
             Overwrite=True,
             Tier="Standard"
         )
-    except botocore.exceptions.ClientError:
-        raise
+    except botocore.exceptions.ClientError as e:
+        raise e
+    
+def enable_renew(lambda_arn, eventbridge_arn):
+    """Enable EventBridge schedule that invokes renew Lambda.
+    
+    Schedule runs every 50 minutes as creds expire every 1 hour.
+    """
+    
+    scheduler = boto3.client("scheduler")
+    try:
+        update_response = scheduler.update_schedule(
+            Name="confluence-renew",
+            GroupName="default",
+            FlexibleTimeWindow={
+                'Mode': 'OFF'
+            },
+            ScheduleExpression="cron(0/50 * * * ? *)",
+            Target={
+                "Arn": lambda_arn,
+                "RoleArn": eventbridge_arn
+            },
+            State="ENABLED"
+        )
+        
+    except botocore.exceptions.ClientError as e:
+        raise e
+    
+def handle_error(error, logger):
+    """Print out error message and exit."""
+    
+    logger.error("Error encountered.")
+    logger.error(error)
+    logger.error("System exiting.")
+    sys.exit(1)
 
 def main():
     """Execute Confluence workflow."""
@@ -168,10 +202,18 @@ def main():
         if len(config_data["log_file"]) != 0 else None
     logger = create_logger(log_file=log_file, log_to_file=True)
     
-    # Store temporary creds if simulated run
-    if args.simulated:
-        logger.info("Storing S3 credentials for run on simulated data.")
-        store_s3_creds(args.ssmkey)
+    try:
+        # Store temporary creds if simulated run
+        if args.simulated:
+            logger.info("Storing S3 credentials for run on simulated data.")
+            store_s3_creds(args.ssmkey)
+            
+        # Enable 'renew' Lambda function to renew S3 creds every 50 minutes
+        enable_renew(config_data["lambda_arn"], config_data["eventbridge_arn"])
+        logger.info("Enabled 'renew' Lambda function. Function will execute every 50 minutes.")
+    
+    except botocore.exceptions.ClientError as e:
+        handle_error(e, logger)
 
     # Submit AWS Batch jobs
     confluence = Confluence(args.configyaml)

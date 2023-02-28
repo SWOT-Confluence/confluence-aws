@@ -12,7 +12,11 @@ Note: This program uses `boto3` to interface with the AWS API.
 
 # configuration
 
-Edit the `confluence.yaml` file to indicate which modules you wish to run and the size of the job array if applicable. Make sure to add a log and submission file path. (Extensive documentation on configuration options coming soon.)
+Edit the `confluence.yaml` file to indicate which modules you wish to run and the size of the job array if applicable. Make sure to add a log and submission file path as well as the ARN values for the renew Lambda function and EventBridge scheduler execution role.
+
+Documentation on configuration parameters: https://github.com/SWOT-Confluence/documentation/blob/main/documentation/confluence_application_documentation_v1.0.pdf
+
+This assumes that you are using a default named profile for AWS credentials.
 
 # execution
 

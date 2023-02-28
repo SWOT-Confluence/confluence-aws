@@ -1,73 +1,25 @@
-log_file: "/path/to/log/file"
-submission_file: "/path/to/submission/file"
+log_file: ""
+submission_file: ""
+lambda_arn: ""
+eventbridge_arn: ""
 stages:
+  datagen:
+    datagen:
+      num_jobs: 1
+      array_size: 0
+      arguments: ["-c", "river", "-i", "3", "-d", "/data", "-o", "-k", "xxx"]
+  combine_data:
+    combine_data:
+      num_jobs: 1
+      array_size: 0
+      arguments: ["-c","/data/continent.json","-d","/data"]
   input:
     input:
       num_jobs: 1
-      array_size: 0
-      arguments: []
+      array_size: 215
+      arguments: ["-i", "-235", "-c", "river", "-r","/data/reach_node.json", "-p", "/data/cycle_passes.json", "-s", "/data/s3_list.json", "-d", "/data/swot"]
   priors:
     priors:
       num_jobs: 1
-      array_size: 6
-      arguments: ["constrained", "grdc", "usgs", "gbpriors"]
-  prediagnostics:
-    prediagnostics:
-      num_jobs: 1
-      array_size: 41
-      arguments: ["reaches.json"]
-  flpe:
-    geobam:
-      num_jobs: 1
-      array_size: 41
-      arguments: ["reaches.json"]
-    hivdi:
-      num_jobs: 1
-      array_size: 41
-      arguments: []
-    metroman:
-      num_jobs: 1
-      array_size: 8
-      arguments: ["sets.json"]
-    momma:
-      num_jobs: 1
-      array_size: 41
-      arguments: ["reaches.json"]
-    sad:
-      num_jobs: 1
-      array_size: 41
-      arguments: ["reaches.json"]
-    sic4dvar:
-      num_jobs: 1
-      array_size: 41
-      arguments: ["reaches.json"]
-  postdiagnostics_flpe:
-    postdiagnostics_flpe:
-      num_jobs: 1
-      array_size: 41
-      arguments: []
-  moi:
-      moi:
-        num_jobs: 1
-        array_size: 5
-        arguments: ["basin.json"]
-  postdiagnostics_moi:
-    postdiagnostics_moi:
-      num_jobs: 1
-      array_size: 41
-      arguments: []
-  offline:
-    offline:
-      num_jobs: 1
-      array_size: 41
-      arguments: []
-  validation:
-    validation:
-      num_jobs: 1
       array_size: 0
-      arguments: ["continent.json"]
-  output:
-    output:
-      num_jobs: 1
-      array_size: 6
-      arguments: ["continent.json", "constrained"]
+      arguments: ["-i", "3", "-r", "constrained", "-p", "usgs", "grdc", "riggs", "gbpriors"]
