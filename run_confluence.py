@@ -154,7 +154,7 @@ def store_s3_creds(key):
     except botocore.exceptions.ClientError as e:
         raise e
     
-def enable_renew(lambda_arn, eventbridge_arn):
+def enable_renew():
     """Enable EventBridge schedule that invokes renew Lambda.
     
     Schedule runs every 50 minutes as creds expire every 1 hour.
@@ -162,20 +162,18 @@ def enable_renew(lambda_arn, eventbridge_arn):
     
     scheduler = boto3.client("scheduler")
     try:
-        update_response = scheduler.update_schedule(
-            Name="confluence-renew",
-            GroupName="default",
-            FlexibleTimeWindow={
-                'Mode': 'OFF'
-            },
-            ScheduleExpression="cron(0/50 * * * ? *)",
-            Target={
-                "Arn": lambda_arn,
-                "RoleArn": eventbridge_arn
-            },
-            State="ENABLED"
-        )
+        # Get schedule
+        get_response = scheduler.get_schedule(Name="confluence-renew")
         
+        # Update schedule
+        update_response = scheduler.update_schedule(
+            Name=get_response["Name"],
+            GroupName=get_response["GroupName"],
+            FlexibleTimeWindow=get_response["FlexibleTimeWindow"],
+            ScheduleExpression=get_response["ScheduleExpression"],
+            Target=get_response["Target"],
+            State="ENABLED"
+        )        
     except botocore.exceptions.ClientError as e:
         raise e
     
@@ -209,7 +207,7 @@ def main():
             store_s3_creds(args.ssmkey)
             
         # Enable 'renew' Lambda function to renew S3 creds every 50 minutes
-        enable_renew(config_data["lambda_arn"], config_data["eventbridge_arn"])
+        enable_renew()
         logger.info("Enabled 'renew' Lambda function. Function will execute every 50 minutes.")
     
     except botocore.exceptions.ClientError as e:

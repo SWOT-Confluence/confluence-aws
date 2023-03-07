@@ -1,7 +1,5 @@
 log_file: ""
 submission_file: ""
-lambda_arn: ""
-eventbridge_arn: ""
 stages:
   datagen:
     datagen:
