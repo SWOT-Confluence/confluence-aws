@@ -51,6 +51,10 @@ def create_args():
                             "--ssmkey",
                             type=str,
                             help="Unique SSM encryption key identifier.")
+    arg_parser.add_argument("-r",
+                        "--renew",
+                        help="Indication to enable renew Lambda",
+                        action="store_true")
     return arg_parser
 
 def create_logger(log_to_console=True, log_file=None, log_to_file=False):
@@ -104,7 +108,7 @@ def store_s3_creds(key):
     
     # Retrieve temporary credentials
     client = boto3.client('sts')
-    response = client.get_session_token()
+    response = client.get_session_token(DurationSeconds=43200)
     creds = {
         "accessKeyId": response["Credentials"]["AccessKeyId"],
         "secretAccessKey": response["Credentials"]["SecretAccessKey"],
@@ -207,8 +211,9 @@ def main():
             store_s3_creds(args.ssmkey)
             
         # Enable 'renew' Lambda function to renew S3 creds every 50 minutes
-        enable_renew()
-        logger.info("Enabled 'renew' Lambda function. Function will execute every 50 minutes.")
+        if args.renew:
+            enable_renew()
+            logger.info("Enabled 'renew' Lambda function. Function will execute every 50 minutes.")
     
     except botocore.exceptions.ClientError as e:
         handle_error(e, logger)
