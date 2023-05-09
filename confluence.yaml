@@ -1,23 +1,88 @@
-log_file: ""
-submission_file: ""
+log_file: "/path/to/logs/confluence-aws.log"
+submission_file: "/path/to/reports/submitted.csv"
 stages:
   datagen:
     datagen:
       num_jobs: 1
-      array_size: 0
-      arguments: ["-c", "river", "-i", "3", "-d", "/data", "-o", "-k", "xxx"]
+      array_size: 7
+      arguments: ["-c", "river", "-i", "-235", "-d", "/data", "-s", "Collection Shortname", "-k", "Unique SSM encryption key identifier"]
   combine_data:
     combine_data:
       num_jobs: 1
       array_size: 0
-      arguments: ["-c","/data/continent.json","-d","/data"]
+      arguments: ["-c","/data/continent.json","-d","/data", "-x"]
   input:
     input:
       num_jobs: 1
-      array_size: 215
-      arguments: ["-i", "-235", "-c", "river", "-r","/data/reach_node.json", "-p", "/data/cycle_passes.json", "-s", "/data/s3_list.json", "-d", "/data/swot"]
+      array_size: 214
+      arguments: ["-i", "-235", "-c", "river", "-r","/mnt/data/reach_node.json", "-p", "/mnt/data/cycle_passes.json", "-s", "/mnt/data/s3_list.json", "-d", "/mnt/data/swot"]
+  disable_renew:
+    disable_renew:
+      num_jobs: 1
+      array_size: 0
+      arguments: []
+  prediagnostics:
+    prediagnostics:
+      num_jobs: 1
+      array_size: 214
+      arguments: ["reaches.json"]
   priors:
     priors:
       num_jobs: 1
       array_size: 0
-      arguments: ["-i", "3", "-r", "constrained", "-p", "usgs", "grdc", "riggs", "gbpriors"]
+      arguments: ["-i", "3", "-r", "constrained", "-p", "usgs", "riggs", "gbpriors"]
+  flpe:
+    neobam:
+      num_jobs: 1
+      array_size: 214
+      arguments: ["reaches.json"]
+    hivdi:
+      num_jobs: 1
+      array_size: 214
+      arguments: []
+    metroman:
+      num_jobs: 1
+      array_size: 22
+      arguments: ["metrosets.json", "-235", "-v"]
+    momma:
+      num_jobs: 1
+      array_size: 214
+      arguments: ["reaches.json"]
+    sad:
+      num_jobs: 1
+      array_size: 214
+      arguments: ["reaches.json"]
+    sic4dvar:
+      num_jobs: 1
+      array_size: 93
+      arguments: ["--json", "sicsets.json", "--constraint", "constrained"]
+  postdiagnostics_flpe:
+    postdiagnostics_flpe:
+      num_jobs: 1
+      array_size: 214
+      arguments: []
+  moi:
+      moi:
+        num_jobs: 1
+        array_size: 0
+        arguments: ["basin.json", "-v", "constrained", "0"]
+  postdiagnostics_moi:
+    postdiagnostics_moi:
+      num_jobs: 1
+      array_size: 214
+      arguments: []
+  offline:
+    offline:
+      num_jobs: 1
+      array_size: 214
+      arguments: ["constrained", "timeseries", "reaches.json"]
+  validation:
+    validation:
+      num_jobs: 1
+      array_size: 214
+      arguments: ["reaches.json", "constrained"]
+  output:
+    output:
+      num_jobs: 1
+      array_size: 0
+      arguments: ["-i", "3", "-c", "continent.json", "-r", "constrained", "-m", "hivdi", "metroman", "moi", "momma", "neobam", "prediagnostics", "priors", "sad", "sic4dvar", "swot"]

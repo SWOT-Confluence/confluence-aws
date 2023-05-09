@@ -6,6 +6,7 @@ Arguements:
   -c: Path to YAML configuration file
   -s: Indicates simulated data run
   -k: Unique SSM encryption key identifier
+  -r: Enable renew Lambda function to store temporary S3 creds
 
 PyYAML must be installed in the environment prior to execution.
 
